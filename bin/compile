@@ -64,7 +64,6 @@ SBT_SHA1="5b15ba0fc63e355d47293def4bc2e58da6f03787"
 ## in 0.10 start-script will depend on package, if packaging
 ## is required - it may not be, we can run .class files or a package-war
 ## instead.
-SBT_TASKS="clean compile stage"
 
 
 if [ ! -d .ivy2/cache ]; then
@@ -116,11 +115,12 @@ mkdir -p "$SBT_USER_HOME/.sbt/plugins" && curl --silent --max-time 10 --location
 #echo " done"
 
 # build app
+SBT_TASKS="clean compile test stage"
 echo "-----> Running: sbt $SBT_TASKS"
 test -e "$SBT_BINDIR"/sbt.boot.properties && PROPS_OPTION="-Dsbt.boot.properties=$SBT_BINDIR/sbt.boot.properties"
 HOME="$SBT_USER_HOME_ABSOLUTE" java -Xmx512M -Dfile.encoding=UTF8 -Duser.home="$SBT_USER_HOME_ABSOLUTE" -Divy.default.ivy.user.dir="$SBT_USER_HOME_ABSOLUTE/.ivy2" $PROPS_OPTION -jar "$SBT_BINDIR"/$SBT_JAR $SBT_TASKS 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  echo " !     Failed to build app with SBT $SBT_VERSION"
+  echo " !     Failed to $SBT_TASKS app with SBT $SBT_VERSION"
   exit 1
 fi
 
